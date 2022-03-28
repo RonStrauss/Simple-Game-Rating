@@ -42,9 +42,13 @@ def index():
 
 
 @app.get("/games")
-def all_games():
+def all_games(search: str = ''):
     with connect_and_return_cursor() as cursor:
-        cursor.execute("SELECT * FROM video_games")
+        if (search == ''):
+            cursor.execute("SELECT * FROM video_games")
+        else:
+            cursor.execute(
+                f"SELECT * FROM video_games WHERE name LIKE '%{search}%'")
         results = cursor.fetchall()
         return results
 
@@ -60,8 +64,9 @@ def single_game(game_id: int, response: Response):
             return {"msg": "Couldn't find game with id "+str(game_id)}
         return results
 
+
 @app.put("/games/{game_id}")
-def rate_game(game_id: int, response: Response, rating:float=0):
+def rate_game(game_id: int, response: Response, rating: float = 0):
     with connect_and_return_cursor() as cursor:
         if (rating == 0):
             response.status_code = 400
@@ -78,8 +83,9 @@ def rate_game(game_id: int, response: Response, rating:float=0):
         results = cursor.fetchall()
         return results
 
+
 @app.put("/games/{game_id}")
-def change_img_URL(game_id: int, response: Response, url:str=''):
+def change_img_URL(game_id: int, response: Response, url: str = ''):
     with connect_and_return_cursor() as cursor:
         if (url == ''):
             response.status_code = 400
@@ -97,16 +103,15 @@ def change_img_URL(game_id: int, response: Response, url:str=''):
         return results
 
 
-
 @app.post("/games")
 def add_new_game(game: Game_POST):
     with connect_and_return_cursor() as cursor:
         if (game.imgURL == None):
             cursor.execute(
-            f"INSERT INTO video_games(name) VALUES ('{game.name}')")
+                f"INSERT INTO video_games(name) VALUES ('{game.name}')")
         else:
             cursor.execute(
-            f"INSERT INTO video_games(name, imgURL) VALUES ('{game.name}','{game.imgURL}')")
+                f"INSERT INTO video_games(name, imgURL) VALUES ('{game.name}','{game.imgURL}')")
         cursor.execute("SELECT * FROM video_games")
         results = cursor.fetchall()
         return results
