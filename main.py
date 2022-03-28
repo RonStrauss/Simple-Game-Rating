@@ -78,6 +78,25 @@ def rate_game(game_id: int, response: Response, rating:float=0):
         results = cursor.fetchall()
         return results
 
+@app.put("/games/{game_id}")
+def change_img_URL(game_id: int, response: Response, url:str=''):
+    with connect_and_return_cursor() as cursor:
+        if (url == ''):
+            response.status_code = 400
+            return {"msg": "Missing a url query"}
+        sql = "SELECT * FROM video_games WHERE id = %s"
+        cursor.execute(sql, game_id)
+        results = cursor.fetchall()
+        if (len(results) == 0):
+            response.status_code = 400
+            return {"msg": "Couldn't find game with id "+str(game_id)}
+        sql = "UPDATE video_games SET imgURL = %s WHERE id = %s"
+        cursor.execute(sql, [url, game_id])
+        cursor.execute("SELECT * FROM video_games")
+        results = cursor.fetchall()
+        return results
+
+
 
 @app.post("/games")
 def add_new_game(game: Game_POST):
