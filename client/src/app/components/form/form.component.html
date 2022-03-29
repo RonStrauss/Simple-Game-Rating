@@ -1,0 +1,23 @@
+<h1 align="center">{{this.game ? "Edit" : "Add New Game"}}</h1>
+
+<form [formGroup]="form" (submit)="handleSubmit()">
+  <div class="group">
+
+    <div class="title">Name:</div>
+    <input type="text" name="title" formControlName="title">
+    <span *ngIf="form.controls['title'].invalid && form.controls['title'].touched">Required Value</span>
+  </div>
+  <div class="group">
+
+    <div class="title">Rating:</div>
+    <input type="number" name="rating" formControlName="rating" max="5" min="0">
+    <span *ngIf="form.controls['rating'].invalid && form.controls['rating'].touched">Invalid range</span>
+  </div>
+  <div class="group">
+
+    <div class="title">Image URL:</div>
+    <input type="text" name="imgURL" formControlName="imgURL">
+
+  </div>
+  <button [disabled]="form.invalid">Submit</button>
+</form>
